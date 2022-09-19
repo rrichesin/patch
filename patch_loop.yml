@@ -1,0 +1,50 @@
+---
+- name: Patch RHEL based systems
+  hosts: ibaset_linux
+  gather_facts: false
+  become: true
+  become_method: sudo
+  become_user: root
+  tasks:
+    - name: install latest packages
+      yum:
+        name: '*'
+        state: latest
+        update_cache: true
+
+- name: Reboot Linux Servers           
+  hosts:  servera:serverb:serverc
+  serial: 1  
+  become: true            
+  become_method: sudo             
+  become_user: root               
+  gather_facts: false           
+  tasks:                          
+    - name: Reboot and wait for it to restart
+      reboot:                     
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5        
+        reboot_timeout: 600       
+        pre_reboot_delay: 0       
+        post_reboot_delay: 0     
+        test_command: whoami
+      loop:
+      
+- name: Reboot Windows Servers
+  hosts: winservera:winserverb:winserverc
+  serial: 1
+  become: true
+  become_method: runas
+  become_user: ron
+  become_flags: logon_type=batch
+  gather_facts: false
+  tasks:
+    - name: Reboot host and wait for it to restart
+      win_reboot:
+        msg: "Reboot initiated by Ansible"
+        connect_timeout: 5
+        reboot_timeout: 600
+        pre_reboot_delay: 0
+        post_reboot_delay: 0
+        test_command: 'exit (Get-Service -Name ProfSvc).Status -ne "Running"'
+      loop:
