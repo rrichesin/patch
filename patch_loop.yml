@@ -11,9 +11,11 @@
         name: '*'
         state: latest
         update_cache: true
+      async: 2700
+      poll: 120
 
 - name: Reboot Linux Servers           
-  hosts:  servera:serverb:serverc
+  hosts: servera:serverb:serverc
   serial: 1  
   become: true            
   become_method: sudo             
@@ -36,7 +38,7 @@
   become: true
   become_method: runas
   become_user: ron
-  become_flags: logon_type=batch
+  #become_flags: logon_type=batch #not sure if we will need this for managed service accounts
   gather_facts: false
   tasks:
     - name: Reboot host and wait for it to restart
